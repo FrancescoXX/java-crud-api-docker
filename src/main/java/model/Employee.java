@@ -1,4 +1,4 @@
-package net.guides.springboot2.crud.model;
+package model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -66,5 +66,4 @@ public class Employee {
 	public String toString() {
 		return "Employee [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", emailId=" + emailId + "]";
 	}
-
 }
