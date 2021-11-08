@@ -1,4 +1,4 @@
-package controller;
+package com.tinystacks.controller;
 
 import java.util.HashMap;
 import java.util.List;
@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import exception.ResourceNotFoundException;
-import model.Employee;
-import repository.EmployeeRepository;
+import com.tinystacks.exception.ResourceNotFoundException;
+import com.tinystacks.model.Employee;
+import com.tinystacks.repository.EmployeeRepository;
 
 @RestController
 @RequestMapping("/")
@@ -69,5 +69,35 @@ public class EmployeeController {
 		Map<String, Boolean> response = new HashMap<>();
 		response.put("deleted", Boolean.TRUE);
 		return response;
+	}
+
+	//Get All Local Items
+	@GetMapping("/local-items")
+	public String getAllItems() {
+		return "getAllItems";
+	}
+
+	//Get one local item
+	@GetMapping("/local-items/{id}")
+	public String getOneItem(@PathVariable(value = "id") Integer localItemId){
+		return "getOneItem:" + localItemId;	
+	}
+
+	//Craete one local item
+	@PostMapping("/local-items")
+	public String createOneItem() {
+		return "getAllItems";
+	}
+
+	//Update one local item
+	@PutMapping("/local-items/{id}")
+	public String updateOneItem(@PathVariable(value = "id") Integer localItemId){
+		return "updateOneItem";
+	}
+
+	//Delete one local item
+	@DeleteMapping("/local-items/{id}")
+	public String deleteOneItem(@PathVariable(value = "id") Integer localItemId){
+		return "deleteOneItem";
 	}
 }

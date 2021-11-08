@@ -1,4 +1,4 @@
-package exception;
+package com.tinystacks.exception;
 
 import java.util.Date;
 
