@@ -28,6 +28,12 @@ public class EmployeeController {
 	@Autowired
 	private EmployeeRepository employeeRepository;
 
+	//Get one local item
+	@GetMapping("/ping")
+	public String getPing(){
+		return "ok";
+	}
+
 	@GetMapping("/employees")
 	public List<Employee> getAllEmployees() {
 		return employeeRepository.findAll();
