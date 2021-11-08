@@ -1,6 +1,8 @@
 ## AWS Docker Templates - Spring Boot
 
-The AWS Docker Templates for Java from TinyStacks enable launching a [Java Spring Boot](https://spring.io/projects/spring-boot) application as a Docker container using an AWS CodePipeline pipeline. The template includes its own small Spring Boot application, enabling developers to start a new Spring BootExpress project immediately. Developers can also take the AWS CodePipeline-specific files in this template and use them to ship an existing Express application as a Docker image on AWS. 
+The AWS Docker Templates for Java from TinyStacks enable launching a [Java Spring Boot](https://spring.io/projects/spring-boot) application as a Docker container using an AWS CodePipeline pipeline. 
+
+The template includes its own small Spring Boot application, enabling developers to start a new Spring Boot project immediately. Developers can also take the AWS CodePipeline-specific files in this template and use them to ship an existing Spring Boot application as a Docker image on AWS. 
 
 ## License
 
@@ -46,12 +48,6 @@ When this application runs, it presents a set of REST API endpoints that other a
 
 The application's data type, Item, contains two data fields: title and content. 
 
-```typescript
-type Item = {
-  title: string;
-  content: string;
-};
-```
 
 There are three sets of endpoints defined, each with slightly different functionality. 
 
@@ -76,7 +72,7 @@ To test out the sample application directly before you package it into a Dockerf
 
 ```
 mvn clean package
-java -jar target/spring-boot-express-0.0.1-SNAPSHOT.jar 
+java -jar target/target/spring-boot-0.0.1-SNAPSHOT.jar
 ```
 
 To test that the server is running, test its `/ping` endpoint from the command line: 
@@ -87,15 +83,10 @@ curl http://127.0.0.1/ping
 
 If the server is running, this call will return an HTTP 200 (OK) result code. 
 
-By default the server starts on port 80. You can change this to port 8000 by defining the environment variable `STAGE` and setting it to the value `local`. To bind to other ports, open the file `src/server.ts` and edit this line as needed: 
-
-```typescript
-const PORT = process.env.STAGE === "local" ? 8000 : 80;
-```
 
 #### Adding an Item in Memory
 
-To add an item in memory, call the `/local-item` endpoint with an HTTP PUT verb. This can be done on Unix/MacOS systems using cUrl: 
+To add an item in memory, call the `/local-items` endpoint with an HTTP POST verb. This can be done on Unix/MacOS systems using cUrl: 
 
 ```
 curl -H "Content-Type: application/json" -X PUT -d '{"title":"my title", "content" : "my content"}' "http://127.0.0.1/item"
@@ -109,33 +100,27 @@ $item = @{
     content="my content"
 }
 $json = $item |convertto-json
-$response = Invoke-WebRequest 'http://127.0.0.1/local-item' -Method Put -Body $json -ContentType 'application/json' -UseBasicParsing
+$response = Invoke-WebRequest 'http://127.0.0.1/local-items' -Method Put -Body $json -ContentType 'application/json' -UseBasicParsing
 ```
 
 The return result will be the same item but with a UUID that serves as its index key into the in-memory dictionary where the entry is stored. 
 
-#### Adding an Item to a DynamoDB Table
-
-The sample application can store items as full JSON files in a DynamoDB table. The name of the table used is retrieved from the environment variable `TABLE_NAME`. 
-
-To write to DynamoDB, the application must be running in a context in which it has been granted permissions to access the DynamoDB table.
 
 ### Dockerfile
 
-The Dockerfile bundles the Express app (your app or the included sample app) onto a new Docker container image and runs the Express server.
+The Dockerfile bundles the Spring Boot app (your app or the included sample app) onto a new Docker container image and runs the Application.
 
-The Docker image itself derives from [Bitnami's Node.js image](https://gallery.ecr.aws/bitnami/node), which is made freely available on the [Amazon ECR Public Gallery](https://gallery.ecr.aws/) and is based on minideb, a minimalist Linux distribution. The Dockerfile uses the Node Package Manager (NPM) to install the Node.js packages required for the Express application as defined in the package-lock.json file. It then copies over the application's files and runs the Express server (as defined in the `src/server.ts` file) on port 80 of the container. 
 
 If you have Docker installed, you can build and try out the sample application locally. Open a command prompt to the directory containing the Dockerfile and run the following command: 
 
 ```
-docker build -t tinystacks/express-crud-app:latest .
+docker build -t tinystacks/spring-boot-0.0.1:latest .
 ```
 
 Once built, run the Docker command locally, mapping port 8080 on your host machine to port 80 on the container: 
 
 ```
-docker run -p 8080:80 -d tinystacks/express-crud-app:latest
+docker run -p 8080:80 -d tinystacks/spring-boot-0.0.1:latest
 ```
 
 To test that the server is running, test its `/ping` endpoint from the command line. This time, you will change the port to 8080 to test that it's running from the running Docker container: 
@@ -166,7 +151,7 @@ phases:
 To run this in AWS CodeBuild, your build pipeline needs to define the following environment variables: 
 
 * **ECR_ENDPOINT**: The name of the Amazon ECR repository to publish to. This variable takes the format: *<accountnumber>*.dkr.ecr.*<aws-region>*.amazonaws.com
-* **ECR_IMAGE_URL**: The name of the Amazon ECR repository plus the name of the container you are publishing. This should take the format: *<accountnumber>*.dkr.ecr.*<aws-region>*.amazonaws.com/aws-docker-express
+* **ECR_IMAGE_URL**: The name of the Amazon ECR repository plus the name of the container you are publishing. This should take the format: *<accountnumber>*.dkr.ecr.*<aws-region>*.amazonaws.com/aws-docker-spring-boot
 
 The variable `AWS_REGION` is a default global variable that will default to the same AWS region in which your build pipeline is defined. If you need to publish to an Amazon ECR repository in another region, modify this script to use a custom environment variable specifying the correct region. For more information on environment variables, see [Environment variables in build environments](https://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref-env-vars.html) on the AWS Web site. 
 
@@ -199,17 +184,9 @@ In addition to the variables discussed for `build.yml`, `release.yml` requires s
 
 ### Existing Project
 
-If you already have an existing Express application, you can use the core files included in this sample to run them on a Docker container in AWS. 
+If you already have an existing Spring Boot application, you can use the core files included in this sample to run them on a Docker container in AWS. 
 
 If your project is already Dockerized (i.e., it has its own Dockerfile), then simply copy over the `build.yml` and `release.yml` files into the root of your existing project. 
-
-If your project is not Dockerized, you will also need to copy over the Dockerfile included in this sample. You may need to change the path to your application's source and to its configuration files (the `package*.json` and `tsconfig.json` files) in the Dockerfile itself to reflect your project's file paths: 
-
-```Dockerfile
-COPY package*.json ./
-COPY tsconfig.json ./
-COPY src ./src
-```
 
 If your application uses a different port than port 80, you will also need to update the `EXPOSE` line in the Dockerfile to use a different port:
 
