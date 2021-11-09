@@ -1,5 +1,6 @@
 package com.tinystacks.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,11 +20,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tinystacks.exception.ResourceNotFoundException;
 import com.tinystacks.model.Employee;
+import com.tinystacks.model.LocalItem;
 import com.tinystacks.repository.EmployeeRepository;
+
+
+
 
 @RestController
 @RequestMapping("/")
 public class EmployeeController {
+
+	ArrayList<LocalItem> items = new ArrayList<LocalItem>();
 
 	@Autowired
 	private EmployeeRepository employeeRepository;
@@ -77,33 +84,39 @@ public class EmployeeController {
 		return response;
 	}
 
+
 	//Get All Local Items
 	@GetMapping("/local-items")
-	public String getAllItems() {
-		return "getAllItems";
+	public ArrayList<LocalItem> getAllItems() {
+		return items;
 	}
 
 	//Get one local item
 	@GetMapping("/local-items/{id}")
-	public String getOneItem(@PathVariable(value = "id") Integer localItemId){
-		return "getOneItem:" + localItemId;	
+	public LocalItem getOneItem(@PathVariable(value = "id") Integer localItemId){
+		return items.get(localItemId-1);
 	}
 
 	//Craete one local item
 	@PostMapping("/local-items")
-	public String createOneItem() {
-		return "getAllItems";
+	public LocalItem createOneItem(@RequestBody LocalItem itemDetails) {
+		LocalItem itemNew = new LocalItem(itemDetails.getId(), itemDetails.getTitle(), itemDetails.getContent());
+		items.add(itemNew);
+		return itemNew;
 	}
 
 	//Update one local item
 	@PutMapping("/local-items/{id}")
-	public String updateOneItem(@PathVariable(value = "id") Integer localItemId){
-		return "updateOneItem";
+	public LocalItem updateOneItem(@RequestBody LocalItem itemDetails) {
+		LocalItem itemNew = new LocalItem(itemDetails.getId(), itemDetails.getTitle(), itemDetails.getContent());
+		items.add(itemNew);
+		return itemNew;
 	}
 
 	//Delete one local item
 	@DeleteMapping("/local-items/{id}")
-	public String deleteOneItem(@PathVariable(value = "id") Integer localItemId){
-		return "deleteOneItem";
+	public ArrayList<LocalItem> deleteOneItem(@PathVariable(value = "id") Integer localItemId){
+		items.remove(0);
+		return items;
 	}
 }
