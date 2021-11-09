@@ -1,6 +1,5 @@
-CREATE TABLE IF NOT EXISTS EMPLOYEES (
+CREATE TABLE IF NOT EXISTS ITEMS (
     id serial PRIMARY KEY,
-    first_name varchar(50) NOT NULL,
-    last_name varchar(50) NOT NULL,
-    email_address varchar(50) NOT NULL
+    title varchar(255) UNIQUE NOT NULL,
+    content varchar(255) NOT NULL
 );

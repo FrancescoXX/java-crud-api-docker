@@ -19,21 +19,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tinystacks.exception.ResourceNotFoundException;
-import com.tinystacks.model.Employee;
+import com.tinystacks.model.Item;
 import com.tinystacks.model.LocalItem;
-import com.tinystacks.repository.EmployeeRepository;
+import com.tinystacks.repository.ItemRepository;
 
 
 
 
 @RestController
 @RequestMapping("/")
-public class EmployeeController {
+public class ItemController {
 
 	ArrayList<LocalItem> items = new ArrayList<LocalItem>();
 
 	@Autowired
-	private EmployeeRepository employeeRepository;
+	private ItemRepository itemRepository;
 
 	//Get one local item
 	@GetMapping("/ping")
@@ -41,44 +41,43 @@ public class EmployeeController {
 		return "ok";
 	}
 
-	@GetMapping("/employees")
-	public List<Employee> getAllEmployees() {
-		return employeeRepository.findAll();
+	@GetMapping("/items")
+	public List<Item> getAllItems() {
+		return itemRepository.findAll();
 	}
 
-	@GetMapping("/employees/{id}")
-	public ResponseEntity<Employee> getEmployeeById(@PathVariable(value = "id") Integer employeeId)
+	@GetMapping("/items/{id}")
+	public ResponseEntity<Item> getItemById(@PathVariable(value = "id") Integer itemId)
 			throws ResourceNotFoundException {
-		Employee employee = employeeRepository.findById(employeeId)
-				.orElseThrow(() -> new ResourceNotFoundException("Employee not found for this id :: " + employeeId));
-		return ResponseEntity.ok().body(employee);
+		Item item = itemRepository.findById(itemId)
+				.orElseThrow(() -> new ResourceNotFoundException("Item not found for this id :: " + itemId));
+		return ResponseEntity.ok().body(item);
 	}
 
-	@PostMapping("/employees")
-	public Employee createEmployee(@Valid @RequestBody Employee employee) {
-		return employeeRepository.save(employee);
+	@PostMapping("/items")
+	public Item createItem(@Valid @RequestBody Item item) {
+		return itemRepository.save(item);
 	}
 
-	@PutMapping("/employees/{id}")
-	public ResponseEntity<Employee> updateEmployee(@PathVariable(value = "id") Integer employeeId,
-			@Valid @RequestBody Employee employeeDetails) throws ResourceNotFoundException {
-		Employee employee = employeeRepository.findById(employeeId)
-				.orElseThrow(() -> new ResourceNotFoundException("Employee not found for this id :: " + employeeId));
+	@PutMapping("/items/{id}")
+	public ResponseEntity<Item> updateItem(@PathVariable(value = "id") Integer itemId,
+			@Valid @RequestBody Item itemDetails) throws ResourceNotFoundException {
+		Item item = itemRepository.findById(itemId)
+				.orElseThrow(() -> new ResourceNotFoundException("Item not found for this id :: " + itemId));
 
-		employee.setEmailId(employeeDetails.getEmailId());
-		employee.setLastName(employeeDetails.getLastName());
-		employee.setFirstName(employeeDetails.getFirstName());
-		final Employee updatedEmployee = employeeRepository.save(employee);
-		return ResponseEntity.ok(updatedEmployee);
+		item.setTitle(itemDetails.getTitle());
+		item.setContent(itemDetails.getContent());
+		final Item updatedItem = itemRepository.save(item);
+		return ResponseEntity.ok(updatedItem);
 	}
 
-	@DeleteMapping("/employees/{id}")
-	public Map<String, Boolean> deleteEmployee(@PathVariable(value = "id") Integer employeeId)
+	@DeleteMapping("/items/{id}")
+	public Map<String, Boolean> deleteItem(@PathVariable(value = "id") Integer itemId)
 			throws ResourceNotFoundException {
-		Employee employee = employeeRepository.findById(employeeId)
-				.orElseThrow(() -> new ResourceNotFoundException("Employee not found for this id :: " + employeeId));
+		Item item = itemRepository.findById(itemId)
+				.orElseThrow(() -> new ResourceNotFoundException("Item not found for this id :: " + itemId));
 
-		employeeRepository.delete(employee);
+		itemRepository.delete(item);
 		Map<String, Boolean> response = new HashMap<>();
 		response.put("deleted", Boolean.TRUE);
 		return response;
@@ -87,7 +86,7 @@ public class EmployeeController {
 
 	//Get All Local Items
 	@GetMapping("/local-items")
-	public ArrayList<LocalItem> getAllItems() {
+	public ArrayList<LocalItem> getAllLocalItems() {
 		return items;
 	}
 
